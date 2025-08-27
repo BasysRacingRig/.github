@@ -64,17 +64,13 @@ This project is developed as part of a university course on **Digital Electronic
 
 - **Basys3 FPGA Board**
 - **Xilinx Vivado** (for synthesizing and programming the FPGA)
-- **Python 3.x** (for the Python program)
+- **Python 3.x** (for the Python program) with required dependencies
 - **VGA Monitor** (for displaying telemetry data)
+- **Assetto Corsa** installed on Windows PC.
 
 ### Steps
 
 This project requires correct startup order between **Assetto Corsa**, the **FPGA board**, and the **Python driver**.  
-
-## Requirements
-- **FPGA**: Basys3 board + Xilinx Vivado (to synthesize and program the SystemVerilog design).  
-- **Python 3.x** with required dependencies  
-- **Assetto Corsa** installed on Windows PC.
 
 ## Program the FPGA
 1. Open the project in **Xilinx Vivado**.  
