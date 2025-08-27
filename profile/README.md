@@ -69,14 +69,71 @@ This project is developed as part of a university course on **Digital Electronic
 
 ### Steps
 
-1. **Set Up the FPGA:**
-   - Use Xilinx Vivado to synthesize the SystemVerilog code and program the Basys3 FPGA board. This will configure the FPGA to handle the encoder signals, manage UART communication, and drive the VGA output.
+This project requires correct startup order between **Assetto Corsa**, the **FPGA board**, and the **Python driver**.  
 
-2. **Install Python and Dependencies:**
-   - Install Python 3.x and any necessary libraries for UART communication and telemetry data management. You can use **pip** to install the required libraries.
-   
-3. **Run the Python Program:**
-   - After setting up the FPGA, run the Python program on the computer to interface with the Basys3 board via UART. The program will handle input processing, telemetry extraction, and display management.
+## Requirements
+- **FPGA**: Basys3 board + Xilinx Vivado (to synthesize and program the SystemVerilog design).  
+- **Python 3.x** with required dependencies:  
+  ```bash
+  python -m venv .venv
+  .venv\Scripts\activate        # Windows
+  pip install -r requirements.txt
+  ```
+- **Assetto Corsa** installed on Windows PC.
+
+## Program the FPGA
+1. Open the project in **Xilinx Vivado**.  
+2. Synthesize and program the **Basys3** board.  
+   This configures the encoder (steering), input capture, and output logic.  
+
+## Configure the Python Driver (UART)
+The Python driver handles UART communication with the FPGA.  
+
+- Manual setup is required: open the driver script (e.g. `driver.py`) and set the correct values for:  
+  - **COM port** (check in Windows Device Manager, e.g. `COM5`)  
+  - **Baud rate** (e.g. `921600`)  
+  - Any other UART parameters (8N1, timeout, etc.)  
+- These settings are **defined in the Python source file**, not passed as command-line arguments.  
+
+Example snippet inside `driver.py`:
+```python
+import serial
+
+ser = serial.Serial(
+    port="COM5",       # <- set your COM port here
+    baudrate=921600,   # <- set your baudrate here
+    bytesize=8,
+    parity="N",
+    stopbits=1,
+    timeout=0.1
+)
+```
+
+## Configure Assetto Corsa
+1. Launch **Assetto Corsa**.  
+2. Open **Controls settings** and configure your steering wheel profile (axis and button mapping).  
+3. **Do not start the Python driver yet** – see startup order below.  
+
+⚠️ **Important:** Assetto Corsa will crash if the Python driver connects to the game’s shared memory before the race session is loaded. Always follow the sequence below.
+
+## Startup Order (critical)
+1. Program the FPGA (see above).  
+2. Launch Assetto Corsa and load into the **pre-race screen** (session loaded, but not driving yet).  
+3. Start the Python driver:  
+   ```bash
+   .venv\Scripts\activate
+   python driver.py
+   ```
+   (UART settings must already be correct in the script.)  
+4. Once the driver reports a successful connection, return to Assetto Corsa and press **Drive**.  
+5. To restart: exit the driving session → stop the Python driver → (optionally) exit the game → then repeat the same order.
+
+## Notes & Tips
+- Always edit the **Python driver file** to match your hardware COM port and baudrate.  
+- If the game crashes or freezes:  
+  - Make sure the Python driver was **not started before loading the pre-race screen**.  
+  - Check that no other program is accessing the game’s shared memory.  
+  - Confirm the correct COM port in Device Manager.  
 
 ## Future Work and Extensions
 
