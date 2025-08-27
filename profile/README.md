@@ -73,12 +73,7 @@ This project requires correct startup order between **Assetto Corsa**, the **FPG
 
 ## Requirements
 - **FPGA**: Basys3 board + Xilinx Vivado (to synthesize and program the SystemVerilog design).  
-- **Python 3.x** with required dependencies:  
-  ```bash
-  python -m venv .venv
-  .venv\Scripts\activate        # Windows
-  pip install -r requirements.txt
-  ```
+- **Python 3.x** with required dependencies  
 - **Assetto Corsa** installed on Windows PC.
 
 ## Program the FPGA
@@ -89,24 +84,17 @@ This project requires correct startup order between **Assetto Corsa**, the **FPG
 ## Configure the Python Driver (UART)
 The Python driver handles UART communication with the FPGA.  
 
-- Manual setup is required: open the driver script (e.g. `driver.py`) and set the correct values for:  
-  - **COM port** (check in Windows Device Manager, e.g. `COM5`)  
-  - **Baud rate** (e.g. `921600`)  
+- Manual setup is required: open the driver script (e.g. `BasysRacingRig.py`) and set the correct values for:  
+  - **COM port** (check in Windows Device Manager, e.g. `COM1`)  
+  - **Baud rate** (e.g. `19200`)  
   - Any other UART parameters (8N1, timeout, etc.)  
 - These settings are **defined in the Python source file**, not passed as command-line arguments.  
 
-Example snippet inside `driver.py`:
+Example snippet inside `BasysRacingRig.py`:
 ```python
 import serial
-
-ser = serial.Serial(
-    port="COM5",       # <- set your COM port here
-    baudrate=921600,   # <- set your baudrate here
-    bytesize=8,
-    parity="N",
-    stopbits=1,
-    timeout=0.1
-)
+# --- Port config ---
+basys3 = serial.Serial('COM1', 19200, timeout=0.01)
 ```
 
 ## Configure Assetto Corsa
@@ -121,8 +109,7 @@ ser = serial.Serial(
 2. Launch Assetto Corsa and load into the **pre-race screen** (session loaded, but not driving yet).  
 3. Start the Python driver:  
    ```bash
-   .venv\Scripts\activate
-   python driver.py
+   python BasysRacingRig.py
    ```
    (UART settings must already be correct in the script.)  
 4. Once the driver reports a successful connection, return to Assetto Corsa and press **Drive**.  
